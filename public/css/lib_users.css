@@ -1,0 +1,233 @@
+html,
+body {
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  text-align: center;
+  font: normal 1rem "PT Sans", Helvetica, Arial, sans-serif;
+}
+
+/* === CONTAINERS === */
+
+div.body-container {
+  height: 100vh;
+  width: 100vw;
+  /* display: grid;
+  grid-template-columns: 30% 70%; */
+  border-top: 4px solid #295aa8;
+}
+
+div.container-main_body {
+  height: 100vh;
+  width: 100vw;
+}
+
+div.container-logout {
+  height: 80vh;
+  width: 100vw;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+div.sub-container-new-user-form,
+div.form-row-edit-user-info {
+  margin: 1rem;
+}
+
+div.container-main-edit-button {
+  margin-top: 3rem;
+}
+
+div.container-books-list {
+  display: flex;
+  flex-direction: column;
+}
+
+div.container-books {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+div.container-new-book-btn {
+  margin-top: 2rem;
+}
+
+/* === BUTTONS === */
+
+.btn {
+  appearance: none;
+  background-color: #fafbfc;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0,
+    rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+  box-sizing: border-box;
+  color: #24292e;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.3rem;
+  list-style: none;
+  padding: 0.4rem 1rem;
+  width: 12rem;
+  position: relative;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: break-word;
+}
+
+.btn:hover {
+  background-color: #f3f4f6;
+  text-decoration: none;
+  transition-duration: 0.1s;
+}
+
+.btn:disabled {
+  background-color: #fafbfc;
+  border-color: rgba(27, 31, 35, 0.15);
+  color: #959da5;
+  cursor: default;
+}
+
+.btn:active {
+  background-color: #edeff2;
+  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+  transition: none 0s;
+}
+
+.btn:focus {
+  outline: 1px transparent;
+}
+
+.btn:before {
+  display: none;
+}
+
+.btn-page-num {
+  cursor: pointer;
+}
+
+.btn-cancel-edit {
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+.btn-return-book {
+  right: 0;
+  padding: 0.5rem 1rem;
+  width: fit-content;
+  height: fit-content;
+}
+
+.btn-hidden {
+  visibility: hidden;
+}
+
+button.delete {
+  margin: 2rem;
+}
+
+/* ==== Nav Bar ==== */
+nav.nav_bar {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  width: 99vw;
+  max-height: 3rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+nav.nav_bar a {
+  margin: 1.5rem 0.5rem 0.5rem 0.5rem;
+}
+
+img.nav_icon {
+  height: 2rem;
+  width: auto;
+  fill: #295aa8;
+}
+
+img.icon-logout {
+  height: 2.6rem;
+  width: auto;
+}
+
+/* ==== Nav Pagination */
+
+nav.pagination {
+  margin: 3rem;
+}
+
+/* ==== login page ==== */
+
+div.container-login_form {
+  display: flex;
+  flex-direction: column;
+}
+
+div.sub-container-login_form {
+  margin: 2rem;
+}
+
+button.btn-new-user {
+  margin-top: 2rem;
+}
+
+/* ==== FLASH MESSAGE ===== */
+
+div.flash {
+  width: 70%;
+  display: inline-block;
+  color: #3399cc;
+  background: #cbe5f2;
+}
+
+div.flash p {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+div.flash.error {
+  color: #ff6633;
+  background: #ffcfbf;
+}
+
+p.invalid-page {
+  display: inline-block;
+}
+
+/* === BOOKS PAGE ===  */
+
+div.book-object {
+  border: 0.1rem solid cornflowerblue;
+  height: 6rem;
+  width: 30rem;
+  display: flex;
+}
+
+img.book-icon {
+  padding: 0.3rem;
+  width: auto;
+  height: 5rem;
+  display: inline-block;
+}
+
+section.book-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

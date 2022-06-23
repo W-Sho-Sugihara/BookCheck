@@ -1,0 +1,59 @@
+
+
+<%# copied from contacts app ADJUST!!!  %>
+
+
+<div class="page-new">
+  <h2><%= @title %></h2>
+
+  <% if session[:error] %>
+    <div class="flash-error">
+      <p><%= session.delete(:error) %></p>
+    </div>
+  <% end %>
+
+  <div class="new_user-form-container">
+    <form class="new_user-form" action="/user/new" method="post">
+      <div class="new_user-form-sub-container">
+        <label class="new_user-label">First Name:</label>
+        <input class="new_user-input" type="text" name="first_name" value="">
+      </div>
+      <div class="new_user-form-sub-container">
+        <label class="new_user-label">Last Name:</label>
+        <input class="new_user-input" type="text" name="last_name" value="">
+      </div>
+      <div class="new_user-form-sub-container">
+        <label class="new_user-label">Street:</label>
+        <input class="new_user-input" type="text" name="street" value="">
+      </div>
+      <div class="new_user-form-sub-container">
+        <label class="new_user-label">City:</label>
+        <input class="new_user-input" type="text" name="city" value="">
+      </div>
+      <div class="new_user-form-sub-container">
+        <label class="new_user-label">State:</label>
+        <input class="new_user-input" type="text" name="state" value="">
+      </div>
+      <div class="new_user-form-sub-container">
+        <label class="new_user-label">Zip Code:</label>
+        <input class="new_user-input" type="text" name="zip_code" value="">
+      </div>
+      <div class="new_user-form-sub-container">
+        <label class="new_user-label">Email:</label>
+        <input class="new_user-input" type="text" name="email" value="">
+      </div>
+      <div class="new_user-form-sub-container">
+        <label class="new_user-label">Phone Number:</label>
+        <input class="new_user-input" type="text" name="phone_number" value="">
+      </div>
+      <div class="new_user-form-sub-container">
+        <label class="new_user-label">Catagory:</label>
+        <input class="new_user-input" type="text" name="catagory" value="">
+      </div>
+      <div class="new_user-form-btn-container">
+        <input class="btn-create-new" type="submit" value="Create">
+      </div>
+    </form>
+  </div>
+  
+</div>

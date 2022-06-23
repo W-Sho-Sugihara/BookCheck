@@ -1,0 +1,25 @@
+<div class="container-login_body">
+  <h2>Login Page</h2>
+
+    <% if session[:error_message] %>
+    <% session.delete(:message_error)%>
+    <div class="flash error">
+      <p><%= session.delete(:error_message) %></p>
+    </div>
+  <% end %>
+
+  <div class="container-login_form">
+    <form method="post" action="/user/login">
+      <div class="sub-container-login_form">
+        <label class="login-cardnumber_label">ID (6 digits):</label>
+        <input class="login-cardnumber_input" type="number" name="id_number"  value="" minlength="6" maxlength="6">
+      </div>
+      <div class="sub-container-login_form">
+        <label class="login-password_label">Password:</label>
+        <input class="login-password_input" type="password" name="password" value="">
+      </div>  
+      <button class="btn btn-login" type="submit">LOGIN</button>
+    </form>
+  </div>
+  <a class="link-new-user" href="/user/new"><button class="btn btn-new-user">Create New User</button></a>
+</div>

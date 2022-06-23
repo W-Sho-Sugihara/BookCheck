@@ -1,0 +1,59 @@
+<div class="container-edit-book-page">
+  <h2> <%= @title %> </h2>
+  
+  <% if session[:error_message] %>
+      <div class="flash error">
+        <p><%= session.delete(:error_message) %></p>
+      </div>
+      <div>
+      <button class='btn' onclick="goPrev()">Go Back</button>
+      <script>
+        function goPrev()
+        { window.history.back(); }
+      </script>
+      </div>
+  <% else %>
+    <% if session[:success_message] %>
+
+      <div class="flash success">
+        <p><%= session.delete(:success_message) %></p>
+      </div>
+      <div>
+   <% end%>
+      <form class="form-container-edit-book-info" action="/books/admin_user/<%= @user.id %>/book/<%= @book ? @book.id + '/edit' : 'add' %>"   method="post">
+        <div class="form-row-edit-book-info">
+          <label for="title">Title:</label>
+          <input name="title"type="text" value="<%= @book ? @book.title : '' %>">
+        </div>
+        <div class="form-row-edit-book-info">
+          <label for="author">Author:</label>
+          <input name="author"type="text" value="<%= @book ? @book.author : '' %>">
+        </div> 
+        <% if @title == "Edit Book Info" %>
+          <div class="form-row-edit-book-info">
+            <label for="checked_out">Checked Out:</label>
+            <input name="checked_out"type="text" value="<%= @book ? @book.checked_out : '' %>">
+          </div> 
+          <div class="form-row-edit-book-info">
+            <label for="checked_out_user_id">ID of Borrower:</label>
+            <input name="checked_out_user_id"type="text" value="<%= @book ? @book.checked_out_user_id : '' %>">
+          </div> 
+          <div class="form-row-edit-book-info">
+            <label for="date_checked_out">Date Checked Out:</label>
+            <input name="date_checked_out"type="text" value="<%= @book ? @book.date_checked_out : '' %>">
+          </div> 
+        <% end %>
+          <button class="btn" type="submit">Save</button>
+      </form>
+      <% if @title == "Edit Book Info"%>
+        <a class='' href='/books/<%= @user.id %>/all/1'><button class="btn">Go Back</button></a>
+        <form class="delete" action="/books/admin_user/<%= @user.id %>/book/<%= @book.id %>/delete" method="post"> 
+          <button class="btn delete" type="submit">Delete book</button>
+        </form>
+      <% end %>
+      <% if @title == "Add New Book" %>
+        <a class='' href="/user/<%= @user.id %>/home" ><button class='btn'>Go Back</button></a>
+      <% end %>
+  <% end %>
+</div>
+  

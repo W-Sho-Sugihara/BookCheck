@@ -1,0 +1,21 @@
+<div class='container-main_body'>
+  <% if session[:error_message] %>
+    <div class="flash error">
+      <p><%= session.delete(:error_message) %></p>
+    </div>
+  <% end %>
+  <h2>
+    <%= @user.name %>
+  </h2>
+  <a class="" href="/books/<%= @user.id %>/all/1"><button class="btn">All Books</button></a>
+  <a class="" href="/books/<%= @user.id %>/available/1"><button class="btn">All Available Books</button></a>
+  <a class="" href="/user/<%= @user.id %>/books/checked_out/1"><button class="btn">Checked Out Books</button></a>
+  <% if @user.admin %>
+  <div class="container-new-book-btn">
+    <a class="" href="/books/admin_user/<%= @user.id %>/book/add"><button class="btn">Add New Book</button></a>
+  </div>
+  <% end %>
+  <div class="container-main-edit-button">
+    <a class="" href="/user/<%= @user.id %>/edit"><button class="btn">Edit User Info</button></a>
+  </div>
+</div>

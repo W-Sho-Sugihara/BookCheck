@@ -1,0 +1,26 @@
+<div class="container-edit-user-page">
+  <h2>Edit User Info</h2>
+  
+  <% if session[:error_message] %>
+    <div class="flash error">
+      <p><%= session.delete(:error_message) %></p>
+    </div>
+  <% end %>
+
+  <form class="form-container-edit-user-info" action="/user/<%= @user.id %>/edit" method="post">
+    <div class="form-row-edit-user-info">
+      <label for="first_name">Edit First Name:</label>
+      <input name="first_name"type="text" value="<%= @user.first_name %>">
+    </div>
+    <div class="form-row-edit-user-info">
+      <label for="last_name">Edit Last Name:</label>
+      <input name="last_name"type="text" value="<%= @user.last_name %>">
+    </div> 
+    <button class="btn" type="submit">Save</button>
+  </form>
+    <a class="btn-cancel-edit" href="/user/<%= @user.id %>/home"><button class="btn ">Go Back</button></a>
+  
+  <form class="delete" action="/user/<%= @user.id %>/delete" method="post">
+    <button class="btn delete" type="submit">Delete User</button>
+  </form>
+</div>

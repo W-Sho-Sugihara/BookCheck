@@ -1,0 +1,8 @@
+<div class="container-books">
+  <h2><%== @title %></h2>
+  <h4>Alphabetically Ordered</h4>
+  <%== display_books(@data) %>
+  <nav class="pagination">
+  <%== generate_pagination_buttons(@data) %>
+  </nav>
+</div>

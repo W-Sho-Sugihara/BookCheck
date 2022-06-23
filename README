@@ -1,0 +1,105 @@
+HELLO! Welcome to my Library User App
+
+This App keeps track of users of the library and their currently checked out books and all books they have checked out in the past.
+
+# SETUP:
+
+    ruby version: "3.0.3"
+    Google Chrome Version 102.0.5005.115 (Official Build) (x86_64)
+    PostgreSQL verion (14.2)
+
+Please run "bash init_setup/setup.sh library" within the terminal to initialize the DB and populate with the initial data.
+
+# Start Up Application:
+
+While within the 'assessment_project' folder in terminal run the application with 'rackup' or 'ruby lib_users.rb'.
+
+# Application-Specific Requirements
+
+-The application must use at least two kinds of related data where one of the data types is a collection of objects of the other type.
+
+    This application has two tables: users and books
+
+-For simplicity, there should be a 1:Many relationship between collections and objects. A Many:Many relationship is not advised.
+
+    A user can checkout mutiple books, but a book can only be checked out by one user at a time.
+
+-The application must provide CRUD capabilities (create-read-update-delete). In other words, the user should be able to use the application to create, display, update, and delete collections and objects. All changes (creation, updates, and deletes) should be reflected in the database.
+
+    Users table has create, read, update and delete capabilities. However the books table only has read and update capabilities.
+
+-The page used to update a collection or object must have a unique URL.
+
+    eg. book return (update books table) '/user/100000/books/23/return'
+    eg. editing user info  '/user/100000/edit'
+
+-The page used to create a collection or object must have a unique URL. For instance, the URL http:://localhost:4567/collections/4/objects/new should display the page for creating a new object in collection 4.
+
+    eg. creating a new user "/user/new"
+    eg. add a book '/books/100000/book/add' (must be admin to do this)
+
+-You may implement delete operations from the pages the display pages for collections and objects.
+
+    eg. deleting a user '/user/100000/delete'
+    eg. delete a book '/books/100000/book/23/delete' (must be admin to do this)
+
+-When listing collections and objects, limit the amount of output per page to a maximum item count (say, 5 or 10 items per page). If there are more than this number of items, the user should be able to scroll through the data in chunks of the maximum item count. This process is called pagination.
+
+    demonstrated on 'line 90' of lib_users.rb, method name 'generate_pagination_buttons'.
+
+-See the Launch School Forums or course conversation area for an example of an application that uses pagination -- the LS App itself display 12 posts per page. Unlike the LS App, your project should validate the page number and issue an appropriate error message if the URL is given with an invalid page number.
+
+    found on line 58 of lib_user.rb
+
+-When listing collections or objects, sort the items consistently. For instance: alphabetically, numerically, by date, and so on.
+
+    books are alphabetically listed, no display of users.
+
+-Validate input data as needed. In particular, you must prevent SQL and JavaScript injection.
+
+    SQL injection is prevented through the use of exec_params on `line 14` of `database_persistence.rb`
+    JavaScript injection is prevented through sanitizing inputs by setting `escape_html: true` on `line 11` of `lib_user.rb`
+
+-The application must require login authentication. Suppose a user enters a URL for the application without logging in. In that case, you should first require authentication, then proceed to the requested page. For instance, if a user who isn't logged in requests the URL of http://localhost:4567/collections/7/items/4, your app should first ask the user to login. Once the user logs in successfully, the app should proceed directly to the requested page.
+
+    This functionality is made capable in this application through storing the last request in the session data. If a login is required then the last request is stored and then the user is redirected to the login page where if login is successful they are redirected to the URL stored within the sessions 'last request'.
+
+-Other Requirements amd Guidelines
+
+-You should provide seed data for the database as either SQL that the grader can run or as part of your application. Don't forget to create the database and its tables as well.
+
+    This is all within the `init_setup` folder and will automatically create the database, tables and populate them with data when `bash init_setup/setup.sh library` is run within terminal.
+
+-Make sure the grader knows how to start the application. Use the README.md file to provide this information.
+-Provide a README.md file with your project that describes any details of your project that you think the grader will need to understand how it works and how to use it. You can also use this file to talk about any design choices or trade-offs you made. At a minimum, the README.md file should mention the following information:
+
+# List of Application Functionality
+
+General (other than login page and create new user page, user must be logged in)
+
+    -login
+    -logout
+    -create new user
+    -delete user
+    -edit user info
+    -view all books
+    -view only available books
+    -view checked out books
+    -checkout books
+    -return books
+
+As Admin
+(logged in user must be an admin to perform the below tasks. User 'Sho Sugihara' id:100000 password:'shos_assessment' is the only admin. No capabilities of adding admins.)
+
+    -add new books
+    -edit book & checkout info
+    -delete books
+
+Validations within application
+
+    -login/logout
+    -create new user inputs
+    -edit user inputs
+    -deleting current user (valid user and no checked out books)
+    -editing book info (admin only)
+    -deleting book info (admin only)

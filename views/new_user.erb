@@ -1,0 +1,35 @@
+<div class="container-new-user">
+  <h2>Create New User</h2>
+
+  <% if session[:error_message] %>
+    <div class="flash error">
+      <p><%= session.delete('error_message') %></p>
+    </div>
+  <% end %>
+
+  <div class="container-new-user-form">
+    <form class="new-user-form" action="/user/new" method="post">
+      <div class="sub-container-new-user-form">
+        <label class="new-user-label">First Name:</label>
+        <input class="new-user-input" type="text" name="first_name" value="<%= params[:first_name] %>" minlength="1">
+      </div>
+      <div class="sub-container-new-user-form">
+        <label class="new-user-label">Last Name:</label>
+        <input class="new-user-input" type="text" name="last_name" value="<%= params[:last_name] %>" minlength="1">
+      </div>
+      <div class="sub-container-new-user-form">
+        <label class="new-user-label">Password (8~30 characters):</label>
+        <input class="new-user-input" type="password" name="password1" value="" minlength="8" maxlength="30">
+      </div>
+      <div class="sub-container-new-user-form">
+        <label class="new-user-label">Re-Enter Password:</label>
+        <input class="new-user-input" type="password" name="password2" value="" minlength="8" maxlength="30">
+      </div>
+      
+      <div class="container-new-user-form-btn">
+        <input class=" btn btn-create-new-user" type="submit" value="Create">
+      </div>
+    </form>
+  </div>
+  
+</div>

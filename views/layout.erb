@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/lib_users.css" />
+    <title>Library Users</title>
+  </head>
+  <body>
+    <h1 class="layout_header">Library Users</h1>
+    <nav class="nav_bar">
+      <%== display_current_nav_icons %>
+      <a class="home" href="/">
+        <img class="nav_icon  icon-home" src="/images/home_icon.svg" />
+      </a>
+    </nav>
+    <div class="body-container">
+      <% if session[:success_message] %>
+        <div class="flash">
+          <p><%= session.delete(:success_message) %></p>
+        </div>
+      <% end %>
+      <%== yield %>
+    </div>
+  </body>
+  <script src="/javascripts/jquery-3.6.0.js"></script>
+    <script src="/javascripts/application.js"></script>
+</html>
