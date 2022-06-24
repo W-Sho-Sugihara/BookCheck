@@ -1,6 +1,6 @@
 HELLO! Welcome to my Library User App
 
-This App keeps track of users of the library and their currently checked out books and all books they have checked out in the past.
+This App keeps track of the books in the library, users of the library and their currently checked out books.
 
 # SETUP:
 
@@ -8,11 +8,12 @@ This App keeps track of users of the library and their currently checked out boo
     Google Chrome Version 102.0.5005.115 (Official Build) (x86_64)
     PostgreSQL verion (14.2)
 
+Within the project there is a init_setup folder containing all of the setup scripts, code and data for initializing this project.
 Please run "bash init_setup/setup.sh library" within the terminal to initialize the DB and populate with the initial data.
 
 # Start Up Application:
 
-While within the 'assessment_project' folder in terminal run the application with 'rackup' or 'ruby lib_users.rb'.
+Run the application using 'rackup' or 'ruby lib_users.rb'.
 
 # Application-Specific Requirements
 
@@ -26,17 +27,18 @@ While within the 'assessment_project' folder in terminal run the application wit
 
 -The application must provide CRUD capabilities (create-read-update-delete). In other words, the user should be able to use the application to create, display, update, and delete collections and objects. All changes (creation, updates, and deletes) should be reflected in the database.
 
-    Users table has create, read, update and delete capabilities. However the books table only has read and update capabilities.
+    Users table has create, read, update and delete capabilities. However the books table only has read and update capabilities for non-admin users. Admin can create, update, read and delete books.
 
 -The page used to update a collection or object must have a unique URL.
 
     eg. book return (update books table) '/user/100000/books/23/return'
     eg. editing user info  '/user/100000/edit'
+    eg. editing book info '/books/admin_user/100000/book/23/edit (must be admin to do this)
 
 -The page used to create a collection or object must have a unique URL. For instance, the URL http:://localhost:4567/collections/4/objects/new should display the page for creating a new object in collection 4.
 
     eg. creating a new user "/user/new"
-    eg. add a book '/books/100000/book/add' (must be admin to do this)
+    eg. add a book '/books/admin_user/100000/book/add' (must be admin to do this)
 
 -You may implement delete operations from the pages the display pages for collections and objects.
 
@@ -45,15 +47,15 @@ While within the 'assessment_project' folder in terminal run the application wit
 
 -When listing collections and objects, limit the amount of output per page to a maximum item count (say, 5 or 10 items per page). If there are more than this number of items, the user should be able to scroll through the data in chunks of the maximum item count. This process is called pagination.
 
-    demonstrated on 'line 90' of lib_users.rb, method name 'generate_pagination_buttons'.
+    demonstrated on 'line 112' of lib_users.rb, method name 'generate_pagination_buttons'. Each has max 10 books per page (books per page count not adjustable)
 
 -See the Launch School Forums or course conversation area for an example of an application that uses pagination -- the LS App itself display 12 posts per page. Unlike the LS App, your project should validate the page number and issue an appropriate error message if the URL is given with an invalid page number.
 
-    found on line 58 of lib_user.rb
+    found on line 56 of lib_user.rb
 
 -When listing collections or objects, sort the items consistently. For instance: alphabetically, numerically, by date, and so on.
 
-    books are alphabetically listed, no display of users.
+    all books and available books are alphabetically listed, but the checked out books are listed by oldest date checked out, no display of users. (listing order is not adjustable)
 
 -Validate input data as needed. In particular, you must prevent SQL and JavaScript injection.
 
@@ -62,16 +64,11 @@ While within the 'assessment_project' folder in terminal run the application wit
 
 -The application must require login authentication. Suppose a user enters a URL for the application without logging in. In that case, you should first require authentication, then proceed to the requested page. For instance, if a user who isn't logged in requests the URL of http://localhost:4567/collections/7/items/4, your app should first ask the user to login. Once the user logs in successfully, the app should proceed directly to the requested page.
 
-    This functionality is made capable in this application through storing the last request in the session data. If a login is required then the last request is stored and then the user is redirected to the login page where if login is successful they are redirected to the URL stored within the sessions 'last request'.
-
--Other Requirements amd Guidelines
+    This functionality is made capable in this application through storing the last request in the session data. If a login is required then the last request is stored and then the user is redirected to the login page where if login is successful they are redirected to the URL stored within the sessions 'last request'. I wanted to try using AJAX for this but that was a little beyond me at this point -_-
 
 -You should provide seed data for the database as either SQL that the grader can run or as part of your application. Don't forget to create the database and its tables as well.
 
     This is all within the `init_setup` folder and will automatically create the database, tables and populate them with data when `bash init_setup/setup.sh library` is run within terminal.
-
--Make sure the grader knows how to start the application. Use the README.md file to provide this information.
--Provide a README.md file with your project that describes any details of your project that you think the grader will need to understand how it works and how to use it. You can also use this file to talk about any design choices or trade-offs you made. At a minimum, the README.md file should mention the following information:
 
 # List of Application Functionality
 
@@ -89,7 +86,8 @@ General (other than login page and create new user page, user must be logged in)
     -return books
 
 As Admin
-(logged in user must be an admin to perform the below tasks. User 'Sho Sugihara' id:100000 password:'shos_assessment' is the only admin. No capabilities of adding admins.)
+(logged in user must be an admin to perform the below tasks.
+User 'Sho Sugihara' id:100000 password:'shos_assessment' is the only admin. No capabilities of adding admins.)
 
     -add new books
     -edit book & checkout info
@@ -103,3 +101,8 @@ Validations within application
     -deleting current user (valid user and no checked out books)
     -editing book info (admin only)
     -deleting book info (admin only)
+    -all pages other than login and create new user require being logged in.
+
+"There was so much more I wanted to impliment when I was making this as it is so far from being a usable app, but had to restrain myself. The UX and UI are horrible and the CSS super minimal, so Im glad thats not being graded, lol. I did impliment password encryption with bcrypt just to brush up on it and apply what was previously taught, but Im sure it was inaccurate in the sense of real world application. I tried to make this application simple (compared to what I had originally planned) and the code organized and readable. Thank you for taking the time to grade it and I hope you enjoy in ^^."
+
+Total hours on project: 54 hours

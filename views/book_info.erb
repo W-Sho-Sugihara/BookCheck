@@ -20,7 +20,8 @@
       </div>
       <div>
    <% end%>
-      <form class="form-container-edit-book-info" action="/books/admin_user/<%= @user.id %>/book/<%= @book ? @book.id + '/edit' : 'add' %>"   method="post">
+      <form class="form-container-edit-book-info"
+      action="/books/admin_user/<%= @user.id %>/book/<%= @book ? @book.id + '/edit' : 'add' %>" method="post">
         <div class="form-row-edit-book-info">
           <label for="title">Title:</label>
           <input name="title"type="text" value="<%= @book ? @book.title : '' %>">
