@@ -1,3 +1,5 @@
+bundle install
+
 DATABASE=$1
 
 dropdb $DATABASE
