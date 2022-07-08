@@ -36,7 +36,7 @@ class DatabasePersistence
     sql = 'SELECT id, first_name, last_name, admin FROM users WHERE id = $1;'
     result = query(sql, id_number).first
 
-    return nil unless !result.nil?
+    return nil if result.nil?
 
     id = result['id']
     first_name = result['first_name']
@@ -83,9 +83,9 @@ class DatabasePersistence
       UPDATE books SET title = $1, author = $2, checked_out = $3, checked_out_user_id = $4, date_checked_out = $5
       WHERE id = $6
     SQL
-    title = new_book_info[:title]
-    author = new_book_info[:author]
-    checked_out = new_book_info[:checked_out]
+    title = new_book_info[:title].split(' ').map(&:capitalize).join(' ')
+    author = new_book_info[:author].split(' ').map(&:capitalize).join(' ')
+    checked_out = new_book_info[:checked_out] == 't' || new_book_info[:checked_out] == 'true'
     checked_out_user_id = new_book_info[:checked_out_user_id]
     date_checked_out = new_book_info[:date_checked_out]
     book_id = new_book_info[:book_id]
@@ -240,46 +240,6 @@ class DatabasePersistence
       <<~SQL
         SELECT count(id) FROM books
         WHERE checked_out_user_id = $1
-      SQL
-    when 'available'
-      <<~SQL
-        SELECT count(id) FROM books
-        WHERE checked_out = 'f'
-      SQL
-    else
-      <<~SQL
-        SELECT count(id) FROM books
-      SQL
-    end
-  end
-
-  # finds the number of books on any given page, returns integer. Page number is within the passed in 'data' hash. (used in pagination)
-  def books_per_page(data)
-    @condition = books_per_page_condition(data[:list_type])
-
-    sql = <<~SQL
-      #{@condition}
-      LIMIT $1
-      OFFSET $2
-    SQL
-
-    results =
-      if data[:list_type] == 'checked_out'
-        query(sql, data[:limit], data[:offset], data[:user_id])
-      else
-        query(sql, data[:limit], data[:offset])
-      end
-
-    results.field_values('count').first.to_i
-  end
-  
-# returns the SQL needed for the query based on the given list type.
-  def books_per_page_condition(list_type)
-    case list_type
-    when 'checked_out'
-      <<~SQL
-        SELECT count(id) FROM books
-        WHERE checked_out_user_id = $3
       SQL
     when 'available'
       <<~SQL

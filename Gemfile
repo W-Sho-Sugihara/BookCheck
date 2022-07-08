@@ -10,5 +10,6 @@ gem "sinatra-reloader"
 gem "sinatra"
 gem "sinatra-contrib"
 gem "erubis"
-
+gem "bcrypt"
 gem 'pg'
+gem 'yaml'

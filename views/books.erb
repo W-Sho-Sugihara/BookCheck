@@ -1,8 +1,19 @@
 <div class="container-books">
   <h2><%== @title %></h2>
   <h4>Alphabetically Ordered</h4>
+  <% if session[:error_message] %>
+      <div class="flash error">
+        <p><%= session.delete(:error_message) %></p>
+      </div>
+  <% else %>
+    <% if session[:success_message] %>
+      <div class="flash success">
+        <p><%= session.delete(:success_message) %></p>
+      </div>
+    <% end %>
   <%== display_books(@data) %>
   <nav class="pagination">
   <%== generate_pagination_buttons(@data) %>
   </nav>
+  <% end %>
 </div>

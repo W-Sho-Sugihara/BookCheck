@@ -56,8 +56,10 @@ def generate_books_html(books, data)
   unless valid_page_number?(data)
     return "<div class='flash error'><p class='invalid-page'>Not a valid page number.</p></div>"
   end
-  if books.empty? && data[:list_type] == 'checked_out'
+  if books.empty? && data[:list_type] == 'checked_out' && data[:page] == 1
     return '<span>You currently have 0 books checked out.</span>'
+  elsif books.empty? && data[:list_type] == 'checked_out' && data[:page] != 1
+    return '<span>No books on current page.</span>'
   elsif books.empty? && data[:list_type] == 'available'
     return '<span>Sorry, there are currently no available books.</span>'
   end
@@ -100,6 +102,8 @@ def generate_book_obj_buttons(book)
     <table><tbody>
       #{if book.checked_out == 't' && book.checked_out_user_id.to_i == @user.id.to_i
           "<tr><td><form action='/user/#{params[:user_id]}/books/#{book.id}/return' method='post'><button type='submit' class='btn btn-return'>Return</button></form></td></tr>"
+        elsif book.checked_out == 't'
+          "<button class='btn-unavailable'>Unavailable</button>"
         elsif book.checked_out == 'f'
           "<tr><td><form action='/user/#{params[:user_id]}/books/#{book.id}/checkout' method='post'><button type='submit' class='btn btn-checkout'>Checkout</button></form></td></tr>"
         end
@@ -199,15 +203,23 @@ def empty_title_or_author?(title, author)
   title.empty? || author.empty?
 end
 
-# edit book info validations
-def checked_out_book_info_valid?(checked_out, checked_out_user_id, date_checked_out)
-  if checked_out == false
-    checked_out_user_id.nil? &&
-      date_checked_out.nil?
-  elsif checked_out == true
-      !@storage.find_user(checked_out_user_id).nil? &&
-      !date_checked_out.empty?
-  end
+# edit checked out status of book validation
+def valid_checked_out_input?(status)
+  return true if status == 't' || status == 'true' || status == 'false' || status == 'f'
+end
+
+# edit book checked out user validation
+def valid_checked_out_user_inputs?(user_id)
+  !@storage.find_user(user_id).nil?
+end
+# edit book date checked out validation
+def valid_checked_out_date_inputs?(date)
+  date = date.split('-').map(&:to_i)
+  Date.new(*date) <= Date.today
+end
+
+def empty_user_id_and_date?(user_id, date)
+  user_id.nil? && date.nil?
 end
 
 # update the current user within sessions
@@ -227,7 +239,7 @@ end
 
 # helps validate the page number in the params
 def valid_page_number?(data)
-  @storage.books_per_page(data)
+  @storage.total_book_count(data) / data[:limit] + 1 >= data[:page]
 end
 
 # checks for any checked out books
@@ -436,37 +448,38 @@ end
 post '/books/admin_user/:user_id/book/add' do
   title = params[:title].split(' ').map(&:capitalize).join(' ')
   author = params[:author].split(' ').map(&:capitalize).join(' ')
-  # checked_out = params[:checked_out] == 't'
-  # checked_out_user_id = params[:checked_out_user_id]
-  # date_checked_out = params[:date_checked_out]
+  @title = "Add New Book"
 
-  if empty_title_or_author?(title, author)
+  if empty_title_or_author?(params[:title], params[:author])
     session[:error_message] = 'Book title and author cannot be empty.'
-    redirect back
+    erb :book_info
+  else
+    @storage.add_new_book(title, author)
+    session[:success_message] = "Successfully added '#{title}' by: #{author} to library."
+    # redirect "/books/admin_user/#{params[:user_id]}/book/add"
+    erb :book_info
   end
-
-  @storage.add_new_book(title, author)
-  session[:success_message] = "Successfully added '#{title}' by: #{author} to library."
-
-  redirect "/books/admin_user/#{params[:user_id]}/book/add"
 end
 
 # as admin edit book info with user login, current user matches URL user id and admin status validation
 get '/books/admin_user/:user_id/book/:book_id/edit' do
   user_id = params[:user_id]
   book_id = params[:book_id]
+  @title = 'Edit Book Info'
 
   if currently_logged_in && !validate_user_id(user_id)
     session[:error_message] = 'Wrong user ID in URL.'
-    redirect back
+    erb :book_info
   elsif currently_logged_in && validate_user_id(user_id) && !@user.admin
     session[:error_message] = 'You must be an administrator to edit books.'
-    redirect back
+    erb :book_info
+  elsif (book_id =~ /[0-9]/).nil?
+    session[:error_message] = "Book ID's must be integers."
+    erb :book_info
   elsif book_doesnt_exist(book_id)
     session[:error_message] = 'The specified book does not exist.'
-    redirect back
+    erb :book_info
   elsif currently_logged_in && validate_user_id(user_id) && @user.admin
-    @title = 'Edit Book Info'
     @book = @storage.find_book(book_id)
     erb :book_info
   else
@@ -478,35 +491,46 @@ end
 
 # route to add book to DB with input validation
 post '/books/admin_user/:user_id/book/:book_id/edit' do
+  @book = @storage.find_book(params[:book_id])
+  @title = 'Edit Book Info'
+
   new_book_info = {
     book_id: params[:book_id],
     title: params[:title],
     author: params[:author],
-    checked_out: params[:checked_out] == 't' || params[:checked_out] == 'true',
+    checked_out: params[:checked_out],
     checked_out_user_id: params[:checked_out_user_id].empty? ? nil : params[:checked_out_user_id].to_i,
     date_checked_out: params[:date_checked_out].empty? ? nil : params[:date_checked_out]
   }
-  
 
-  if empty_title_or_author?(new_book_info[:title], new_book_info[:author]) ||
-     !checked_out_book_info_valid?(new_book_info[:checked_out], new_book_info[:checked_out_user_id], new_book_info[:date_checked_out])
-    session[:error_message] = <<~STR
-      Invalid Inputs. Inputs cannot be empty and/or conflict. 
-      (eg. Title and author cannot be empty.  
-      'Checked out' cannot be false when it has a 'Date checked out' value.)
+  if empty_title_or_author?(new_book_info[:title], new_book_info[:author])
+    session[:error_message] = 'Title and/or author cannto be empty.'
+    erb :book_info
+  elsif !valid_checked_out_input?(new_book_info[:checked_out])
+    session[:error_message] = "The value for 'Checked Out' must be either 'true', 't', 'false' or 'f'."
+    erb :book_info
+  elsif (new_book_info[:checked_out] == 't' || new_book_info[:checked_out] == 'true') &&
+    !valid_checked_out_user_inputs?(new_book_info[:checked_out_user_id])
+      session[:error_message] = 'Entered User ID not valid.'
+      erb :book_info
+  elsif (new_book_info[:checked_out] == 't' || new_book_info[:checked_out] == 'true') &&
+    !valid_checked_out_date_inputs?(new_book_info[:date_checked_out])
+      session[:error_message] = 'Entered date connot be in the future.'
+      erb :book_info
+  elsif new_book_info[:checked_out] == 'f' || new_book_info[:checked_out] == 'false' &&
+    !empty_user_id_and_date?(new_book_info[:checked_out_user_id], new_book_info[:date_checked_out])
+      session[:error_message] = 'If not checked out, User ID and Date checked out must be empty.'
+      erb :book_info
+  else
+    @storage.update_book_info(new_book_info)
+    @book = @storage.find_book(new_book_info[:book_id])
+    session[:success_message] = <<~STR
+      '#{@book.title}' by 
+      #{@book.author.split(',').rotate(1).join(' ')} 
+      has been successfully updated
     STR
-    redirect "/books/admin_user/#{params[:user_id]}/book/#{new_book_info[:book_id]}/edit "
+    erb :book_info
   end
-
-  @title = 'Edit Book Info'
-  @book = @storage.find_book(new_book_info[:book_id])
-  @storage.update_book_info(new_book_info)
-  session[:success_message] = <<~STR
-    '#{@book.title}' by 
-    #{@book.author.split(',').rotate(1).join(' ')} 
-    has been successfully updated
-  STR
-  redirect "/books/admin_user/#{params[:user_id]}/book/#{new_book_info[:book_id]}/edit "
 end
 
 # route to delete book from DB with user login, current user matches URL user id and admin status validation
@@ -519,6 +543,9 @@ post '/books/admin_user/:user_id/book/:book_id/delete' do
     redirect back
   elsif currently_logged_in && validate_user_id(user_id) && !@user.admin
     session[:error_message] = 'You must be an administrator to edit books.'
+    redirect back
+  elsif (book_id =~ /[0-9]/).nil?
+    session[:error_message] = "Book ID's must be integers."
     redirect back
   elsif book_doesnt_exist(book_id)
     session[:error_message] = 'The specified book does not exist.'
@@ -539,12 +566,19 @@ get '/books/:user_id/:list_type/:page' do
   user_id = params[:user_id]
   list_type = params[:list_type]
   page = params[:page]
+  @title = "#{list_type.capitalize} Books"
 
   if currently_logged_in && !validate_user_id(user_id)
     session[:error_message] = 'Wrong user ID in URL.'
-    redirect back
+    erb :books
+  elsif (page =~ /[0-9]/).nil?
+    session[:error_message] = 'Page numbers must be integers.'
+    erb :books
+  elsif page.to_i.zero?
+    session[:error_message] = 'Page number cannot be 0.'
+    erb :books
   elsif currently_logged_in && validate_user_id(user_id)
-    @title = "#{list_type.capitalize} Books"
+    
     @data = {
       user_id: user_id,
       list_type: list_type,
@@ -565,12 +599,18 @@ get '/user/:user_id/books/:list_type/:page' do
   user_id = params[:user_id]
   list_type = params[:list_type]
   page = params[:page]
+  @title = "Books Currently Checked out by: #{@user.name}"
 
   if currently_logged_in && !validate_user_id(user_id)
     session[:error_message] = 'Wrong user ID in URL.'
-    redirect back
+    erb :books
+  elsif (page =~ /[0-9]/).nil?
+    session[:error_message] = 'Page numbers must be integers.'
+    erb :books
+  elsif page.to_i.zero?
+    session[:error_message] = 'Page number cannot be 0.'
+    erb :books
   elsif currently_logged_in && validate_user_id(user_id)
-    @title = "Books Currently Checked out by: #{@user.name}"
     @data = {
       user_id: user_id,
       list_type: list_type,

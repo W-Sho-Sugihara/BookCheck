@@ -1,12 +1,13 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    bcrypt (3.1.18)
     erubis (2.7.0)
     multi_json (1.15.0)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.8)
-    pg (1.4.0)
+    pg (1.4.1)
     puma (5.6.4)
       nio4r (~> 2.0)
     rack (2.2.3.1)
@@ -27,17 +28,20 @@ GEM
     sinatra-reloader (1.0)
       sinatra-contrib
     tilt (2.0.10)
+    yaml (0.2.0)
 
 PLATFORMS
   x86_64-darwin-18
 
 DEPENDENCIES
+  bcrypt
   erubis
   pg
   puma
   sinatra
   sinatra-contrib
   sinatra-reloader
+  yaml
 
 RUBY VERSION
    ruby 3.0.3p157
