@@ -20,7 +20,6 @@ end
 before do
   @storage = DatabasePersistence.new(logger)
   @user = session[:current_user]
-  puts session.to_hash
 end
 
 after do
@@ -65,7 +64,7 @@ post '/user/login' do
     redirect "/user/#{session[:current_user].id}/home"
   else
     session[:error_message] = 'Invalid id Number and/or Password.'
-    redirect '/user/login'
+    erb :login
   end
 end
 
@@ -124,7 +123,7 @@ get '/user/new/:user_id/welcome' do
 
   if @user.nil?
     session[:error_message] = "I'm sorry, but you don't exist yet. Please create an account or login."
-    erb :login
+    redirect '/user/login'
   else
     erb :welcome_new_user
   end
@@ -142,7 +141,7 @@ get '/user/:user_id/home' do
   else
     session[:error_message] = 'Please login to continue.'
     session[:last_response] = "/user/#{user_id}/home"
-    erb :login
+    redirect '/user/login'
   end
 end
 
@@ -159,7 +158,7 @@ get '/user/:user_id/edit' do
     session[:error_message] = 'Please login to continue.'
     session[:last_response] = "/user/#{user_id}/edit"
 
-    erb :login
+    redirect '/user/login'
   end
 end
 
@@ -236,7 +235,7 @@ post '/books/admin_user/:user_id/book/add' do
     @storage.add_new_book(title, author)
     session[:success_message] = "Successfully added '#{title}' by: #{author} to library."
     # redirect "/books/admin_user/#{params[:user_id]}/book/add"
-    erb :book_info
+    redirect "/books/admin_user/#{params[:user_id]}/book/add"
   end
 end
 
@@ -248,16 +247,16 @@ get '/books/admin_user/:user_id/book/:book_id/edit' do
 
   if currently_logged_in && !validate_user_id(user_id)
     session[:error_message] = 'Wrong user ID in URL.'
-    erb :book_info
+    redirect back
   elsif currently_logged_in && validate_user_id(user_id) && !@user.admin
     session[:error_message] = 'You must be an administrator to edit books.'
-    erb :book_info
+    redirect back
   elsif (book_id =~ /[0-9]/).nil?
     session[:error_message] = "Book ID's must be integers."
-    erb :book_info
+    redirect back
   elsif book_doesnt_exist(book_id)
     session[:error_message] = 'The specified book does not exist.'
-    erb :book_info
+    redirect back
   elsif currently_logged_in && validate_user_id(user_id) && @user.admin
     @book = @storage.find_book(book_id)
     erb :book_info
@@ -308,7 +307,7 @@ post '/books/admin_user/:user_id/book/:book_id/edit' do
       #{@book.author.split(',').rotate(1).join(' ')} 
       has been successfully updated
     STR
-    erb :book_info
+    redirect "/books/admin_user/#{params[:user_id]}/book/#{params[:book_id]}/edit"
   end
 end
 

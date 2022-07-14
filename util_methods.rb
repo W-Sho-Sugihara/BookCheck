@@ -222,3 +222,4 @@ end
 def book_doesnt_exist(book_id)
   @storage.find_book(book_id).nil?
 end
+

@@ -197,6 +197,7 @@ class DatabasePersistence
     end
   end
 
+  
   def generate_sql_for_grab_books(list_type)
     case list_type
     when 'checked_out'
