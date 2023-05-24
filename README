@@ -112,3 +112,5 @@ Current user info
 "There was so much more I wanted to impliment when I was making this as it is so far from being a usable app, but had to restrain myself. The UX and UI are horrible and the CSS super minimal, so Im glad thats not being graded, lol. I did impliment password encryption with bcrypt just to brush up on it and apply what was previously taught, but Im sure it was inaccurate in the sense of real world application. I tried to make this application simple (compared to what I had originally planned) and the code organized and readable. Thank you for taking the time to grade it and I hope you enjoy in ^^."
 
 Total hours on project: 54 hours
+
+adding additional stuff for webhook
